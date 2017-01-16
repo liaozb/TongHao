@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+
+<script src="/Content/js/datepicker/WdatePicker.js"></script>
+
+<script>
+    $(function () {
+        gridList();
+    })
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/EatManage/EditData/GetGridDataJson",
+            height: $(window).height() - 96,
+            colModel: [
+                { label: "主键", name: "F_Id", hidden: true, key: true }, {
+                    label: '部门', name: 'F_DepartmentId', width: 150, align: 'left',
+                    formatter: function (cellvalue, options, rowObject) {
+                        return top.clients.organize[cellvalue] == null ? "" : top.clients.organize[cellvalue].fullname;
+                    }
+                },
+                { label: '姓名', name: 'name', width: 100, align: 'left' },
+                { label: '报餐情况', name: 'baocan', width: 100, align: 'left' },
+                { label: '上班考勤', name: 'shangban', width: 100, align: 'left' },
+                { label: '下班考勤', name: 'xiaban', width: 100, align: 'left' },
+                { label: '早餐刷卡', name: 'zaocan', width: 100, align: 'left' },
+                { label: '午餐刷卡', name: 'wucan', width: 100, align: 'left' },
+                { label: '晚餐刷卡', name: 'wancan', width: 100, align: 'left' }
+            ],
+            sortname: 'F_DepartmentId asc,F_CreatorTime desc',
+            viewrecords: true
+        });
+        $("#btn_search").click(function () {
+            $gridList.jqGrid('setGridParam', {
+                postData: { keyword: $("#txt_keyword").val(), starttime: $("#starttime").val()  },
+            }).trigger('reloadGrid');
+        });
+    }
+
+    function btn_edit() {
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+       
+        $.modalOpen({
+            id: "Form",
+            title: "修改考勤数据",
+            url: "/EatManage/EditData/Details?keyValue=" + keyValue + "&startime=" + $("#starttime").val(),
+            width: "700px",
+            height: "310px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+
+
+</script>
+<div class="topPanel">
+    <div class="toolbar">
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+    
+        <div class="operate">
+            <ul class="nav nav-pills">
+                <li class="first">已选中<span>1</span>项</li>
+                <li><a id="NF-edit" authorize="yes" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改考勤数据</a></li>
+                 
+            </ul>
+            <a href="javascript:;" class="close"></a>
+        </div>
+         
+    </div>
+    <div class="search">
+        <table>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <input id="starttime" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" style="width: 100px;" />
+                        
+                    </div>
+                </td>
+                <td style="padding-left: 10px;">
+
+                    <div class="input-group">
+                        <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要查询关键字" style="width: 200px;">
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+</div>
+
+
+

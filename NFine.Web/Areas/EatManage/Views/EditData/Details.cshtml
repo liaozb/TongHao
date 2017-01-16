@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+
+ <script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+         
+        if (!!keyValue) {
+            $.ajax({
+                url: "/EatManage/EditData/GetFormJson",
+                data: { keyValue: keyValue, starttime: $.request("starttime") },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                     
+                }
+            });
+        }
+    });
+   
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/EatManage/EditData/SubmitForm?keyValue=" + keyValue + "&starttime" + $.request("starttime"),
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$.reload();
+            }
+        })
+    }
+</script>
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+     
+            <table class="form">
+                <tr>
+                    <th class="formTitle">报餐</th>
+                    <td class="formValue">
+                        <select id="baocan" name="baocan" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                   
+                </tr>
+                <tr>
+                    <th class="formTitle">上班考勤</th>
+                    <td class="formValue">
+                        <select id="shangban" name="shangban" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                    <th class="formTitle">下班考勤</th>
+                    <td class="formValue">
+                        <select id="xiaban" name="xiaban" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">早餐刷卡</th>
+                    <td class="formValue">
+                        <select id="zaocan" name="zaocan" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                    <th class="formTitle">午餐刷卡</th>
+                    <td class="formValue">
+                        <select id="wucan" name="wucan" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">晚餐刷卡</th>
+                    <td class="formValue">
+                        <select id="wancan" name="wancan" class="form-control required">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                        
+                    </td>
+                    
+                </tr>
+                
+
+            </table>
+   </div>
+</form>
+
