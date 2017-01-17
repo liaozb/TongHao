@@ -34,7 +34,7 @@ Public Class Form1
                         Dim col As Integer = 0
                         For Each ziduan As String In hang.Split(Chr(9))
                             If col = 0 Then
-                                cardNo = ziduan
+                                cardNo = ziduan.Trim()
                             ElseIf col = 1 Then
                                 attDate = ziduan
                             End If
@@ -42,15 +42,12 @@ Public Class Form1
                         Next
                         Dim dt As DateTime
                         If Not String.IsNullOrEmpty(cardNo) AndAlso cardNo <> "CardNo" AndAlso DateTime.TryParseExact(attDate, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None, dt) Then
-                            If conn.Query("select F_Id from PosLog where CardNo=@CardNo and PosTime=@PosTime",
-                                      New With {
-                                      .CardNo = cardNo,
-                                      .PosTime = dt}).Count = 0 Then
-                                conn.Execute("insert into PosLog(F_Id,CardNo,PosTime)values(@F_Id,@CardNo,@PosTime);", New With {
+                            conn.Execute("if not exists(select 1 from PosLog where CardNo=@CardNo and PosTime=@PosTime) 
+                                           insert into PosLog(F_Id,CardNo,PosTime)values(@F_Id,@CardNo,@PosTime);", New With {
                                      .F_Id = Guid.NewGuid(),
                                       .CardNo = cardNo,
                                       .PosTime = dt})
-                            End If
+
                         End If
                     Next
                 End Using
@@ -67,7 +64,7 @@ Public Class Form1
         End If
     End Sub
     Sub KaoQin()
-        Dim bIsConnected = axCZKEM1.Connect_Net(ConfigurationManager.AppSettings("kaoqinip"), Integer.Parse(ConfigurationManager.AppSettings("kaoqinport")))
+        Dim bIsConnected = axCZKEM1.Connect_Net(ConfigurationManager.AppSettings("kaoqinip"), Convert.ToInt32(ConfigurationManager.AppSettings("kaoqinport")))
         If bIsConnected = True Then
             Dim sdwEnrollNumber As String = ""
             Dim idwVerifyMode As Integer = 0
@@ -81,23 +78,17 @@ Public Class Form1
             Dim idwWorkcode As Integer = 0
             axCZKEM1.EnableDevice(1, False)
             If axCZKEM1.ReadGeneralLogData(1) Then
-                While axCZKEM1.SSR_GetGeneralLogData(1, sdwEnrollNumber, idwVerifyMode, idwInOutMode, idwYear, idwMonth,
+                Using conn As New SqlConnection(ConfigurationManager.ConnectionStrings("defCon").ConnectionString)
+                    While axCZKEM1.SSR_GetGeneralLogData(1, sdwEnrollNumber, idwVerifyMode, idwInOutMode, idwYear, idwMonth,
                                     idwDay, idwHour, idwMinute, idwSecond, idwWorkcode)
-                    Using conn As New SqlConnection(ConfigurationManager.ConnectionStrings("defCon").ConnectionString)
-                        If conn.Query("select F_Id from  AttLog where CardNo=@CardNo and AttDate=@AttDate",
-                                      New With {
-                                      .CardNo = sdwEnrollNumber,
-                                      .AttDate = New DateTime(idwYear, idwMonth,
-                                    idwDay, idwHour, idwMinute, idwSecond)}).Count = 0 Then
-                            conn.Execute("insert into AttLog(F_Id,CardNo,AttDate)values(@F_Id,@CardNo,@AttDate);", New With {
+                        conn.Execute("if not exists(select 1 from AttLog where CardNo=@CardNo and AttDate=@AttDate) 
+                                      insert into AttLog(F_Id,CardNo,AttDate)values(@F_Id,@CardNo,@AttDate);", New With {
                                      .F_Id = Guid.NewGuid(),
-                                      .CardNo = sdwEnrollNumber,
+                                      .CardNo = sdwEnrollNumber.Trim(),
                                       .AttDate = New DateTime(idwYear, idwMonth,
                                     idwDay, idwHour, idwMinute, idwSecond)})
-                        End If
-                    End Using
-
-                End While
+                    End While
+                End Using
             End If
             axCZKEM1.EnableDevice(1, True)
         Else

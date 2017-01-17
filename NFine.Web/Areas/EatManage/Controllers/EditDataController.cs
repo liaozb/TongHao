@@ -1,9 +1,12 @@
 ﻿using NFine.Application.EatManage;
 using NFine.Application.SystemManage;
 using NFine.Code;
+using NFine.Code.Excel;
 using NFine.Domain.Entity.EatManage;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -231,6 +234,61 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 lists.Add(list);
             }
             return Content(lists.ToJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult KQExcel(string starttime)
+        {
+            OrganizeApp organizeApp = new OrganizeApp();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("部门");
+            dt.Columns.Add("姓名");
+       
+            DateTime now = DateTime.Now;
+            if (!string.IsNullOrEmpty(starttime))
+            {
+                now = starttime.ToDate();
+            }
+            now=  new DateTime(now.Year, now.Month, 1);
+            for (int i = 1; i <= now.AddMonths (1).AddDays (-1).Day; i++)
+            {
+                dt.Columns.Add(i+"日");
+
+            }
+            foreach (var item in userApp.GetList(new Pagination() {  page=1, rows=1000, sord="asc", sidx= "F_DepartmentId asc,F_CreatorTime desc" } , ""))
+            {
+                DataRow dr = dt.NewRow();
+                dr["部门"] = organizeApp.GetForm(item.F_DepartmentId).F_FullName;
+                dr["姓名"] = item.F_RealName;
+                for (int i = 1; i <= now.AddMonths(1).AddDays(-1).Day; i++)
+                {
+
+
+                    string times = string.Empty;
+                    if (!string.IsNullOrEmpty (item.F_AttCard))
+                    {
+                        foreach (var attr in attlApp.GetList(item.F_AttCard.Trim(), new DateTime(now.Year, now.Month, i), new DateTime(now.Year, now.Month, i)))
+                        {
+                            times += attr.AttDate.ToString("HH:mm:ss") + "  ";
+                        }
+                    }
+                   
+                    dr[i + "日"] = times;
+                }
+                dt.Rows.Add(dr);
+            }
+
+            NPOIExcel npoiexel = new NPOIExcel();
+            string fileDir = DateTime.Now.ToString("yyyyMMdd");
+            string fileName = "KQ" + Guid.NewGuid().ToString("N") + ".xls";
+            string destDir = Server.MapPath(@"/XlsTemp") + "\\" + fileDir + "\\";
+            if (!Directory.Exists(destDir))
+            {
+                Directory.CreateDirectory(destDir);
+            }
+            npoiexel.ToExcel(dt, "考勤数据", "Sheet1", destDir + fileName);
+            return Content("/XlsTemp/" + fileDir + "/" + fileName);
+
         }
     }
 }

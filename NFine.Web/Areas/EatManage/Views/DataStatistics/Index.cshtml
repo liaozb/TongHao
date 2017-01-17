@@ -20,14 +20,14 @@
                         return top.clients.organize[cellvalue] == null ? "" : top.clients.organize[cellvalue].fullname;
                     }
                 },
-                { label: '姓名', name: 'name', width: 100, align: 'left' },
+                { label: '姓名', name: 'name', width: 120, align: 'left' },
                 { label: '报餐情况', name: 'baocan', width: 80, align: 'left' },
                 { label: '上班考勤', name: 'shangban', width: 80, align: 'left' },
                 { label: '下班考勤', name: 'xiaban', width: 80, align: 'left' },
                 { label: '早晨刷卡', name: 'zaocan', width: 80, align: 'left' },
                 { label: '中餐刷卡', name: 'wucan', width: 80, align: 'left' },
                 { label: '晚餐刷卡', name: 'wancan', width: 80, align: 'left' },
-                 { label: '扣次数', name: 'cishu', width: 80, align: 'left' },
+                 { label: '扣次数', name: 'cishu', width:120, align: 'left' },
                   { label: '预计补助', name: 'yujibuzhu', width: 120, align: 'left' }
             ],
             sortname: 'F_DepartmentId asc,F_CreatorTime desc',
@@ -51,7 +51,7 @@
             <tr>
                 <td>
                     <div class="input-group">
-                        <input id="starttime" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" style="width: 100px;"/>
+                        <input id="starttime" type="text" placeholder="考勤日期" class="form-control input-wdatepicker" onfocus="WdatePicker()" style="width: 100px;"/>
                         
                     </div>
                 </td>

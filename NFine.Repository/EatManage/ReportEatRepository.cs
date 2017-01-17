@@ -71,15 +71,12 @@ namespace NFine.Repository.EatManage
         public List<AttLogEntity> GetList(string CardNo, DateTime start, DateTime end)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append(@"SELECT *
-                            FROM    AttLog 
-                                    
-                            WHERE  CardNo=@CardNo and  AttDate between @start and @end ");
+            strSql.Append(@"SELECT * FROM  AttLog  WHERE  CardNo=@card and AttDate between @start and @end ");
             DbParameter[] parameter =
             {
-                 new SqlParameter("@CardNo",CardNo),
-                  new SqlParameter("@start",start.ToString ("yyyy-MM-dd 00:00:00")),
-                  new SqlParameter("@end",end.ToString ("yyyy-MM-dd 23:59:59"))
+                 new SqlParameter("@card",SqlDbType.VarChar,50,CardNo),
+                  new SqlParameter("@start",SqlDbType.DateTime,20,start.ToString("yyyy-MM-dd 00:00:00")),
+                  new SqlParameter("@end",SqlDbType.DateTime,20,end.ToString ("yyyy-MM-dd 23:59:59"))
             };
             return this.FindList(strSql.ToString(), parameter);
         }

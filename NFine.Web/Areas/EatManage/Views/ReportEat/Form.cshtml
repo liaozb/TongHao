@@ -7,60 +7,9 @@
     $(function () {
         
    
-            $.ajax({
-                url: "/EatManage/ReportEat/GetFormJson",
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    $("#form1").formSerialize(data);
-                }
-            });
+          
         
     });
     
-    function submitForm() {
-        if (!$('#form1').formValid()) {
-            return false;
-        }
-        $.submitForm({
-            url: "/EatManage/ReportEat/SubmitForm",
-            param: $("#form1").formSerialize(),
-            success: function () {
-            
-                $.currentWindow().$.reload();
-            }
-        })
-    }
+   
 </script>
-<form id="form1">
-    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
-        
-        <div style="padding-top: 20px; margin-right: 30px;">
-            <table class="form">
-                <tr>
-                    <th class="formTitle"  style="width:140px;">今天中午是否报餐:</th>
-                    <td class="formValue">
-                        <div class="rdio">
-                            <input id="F_TodayTrue" name="F_Today" type="radio"><label for="F_TodayTrue">吃</label>
-                        </div>
-                        <div class="rdio">
-                            <input id="F_TodayFalse" name="F_Today" type="radio"><label for="F_TodayFalse">不吃</label>
-                        </div>
-                    </td>
-                    <th class="formTitle" style="width:140px;">明日中午是否报餐</th>
-                    <td class="formValue">
-                        <div class="rdio">
-                            <input id="F_TomorrowTrue" name="F_Tomorrow" type="radio"><label for="F_TomorrowTrue">吃</label>
-                        </div>
-                        <div class="rdio">
-                            <input id="F_TomorrowFalse" name="F_Tomorrow" type="radio"><label for="F_TomorrowFalse">不吃</label>
-                        </div>
-
-                    </td>
-                </tr>
-                
-            </table>
-        </div>
-       
-    </div>
-</form>

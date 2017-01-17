@@ -1,50 +1,88 @@
 ﻿@{
     ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Index.cshtml";
+    Layout = "~/Views/Shared/_Form.cshtml";
 }
 <link href="~/Content/fullcalendar.min.css" rel="stylesheet" />
 <script src="~/Scripts/lib/moment.min.js"></script>
 <script src="~/Scripts/fullcalendar.min.js"></script>
 <script src="~/Scripts/locale/zh-cn.js"></script>
 <script type="text/javascript">
-$(function() {
-	$('#calendar').fullCalendar({
-		header: {
-			left: 'prev,next today',
-			center: 'title',
-			right: 'month,agendaWeek,agendaDay'
-		},
-		events: '/EatManage/ReportEat/GetGridJson'
-	});
-	
-});
-function btn_add() {
-    $.modalOpen({
-        id: "Form",
-        title: "今日报餐",
-        url: "/EatManage/ReportEat/Form",
-        width: "700px",
-        height: "220px",
-        callBack: function (iframeId) {
-            top.frames[iframeId].submitForm();
-        }
+    $(function () {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            events: '/EatManage/ReportEat/GetGridJson'
+        });
+        $.ajax({
+            url: "/EatManage/ReportEat/GetFormJson",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $("#form1").formSerialize(data);
+            }
+        });
+
     });
-}
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/EatManage/ReportEat/SubmitForm",
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.reload();
+            }
+        })
+    }
+
 </script>
-<div class="topPanel">
-    <div class="toolbar">
-        <div class="btn-group">
-            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+<div class="rows" style="margin-bottom: 1%; border: 1px solid #e6e6e6; overflow: hidden; padding-left: 1px;">
+    <div class="panel panel-default">
+        <div class="panel-heading"><i class="fa fa-line-chart fa-lg" style="padding-right: 5px;"></i>今日报餐
         </div>
-       
-        <div class="btn-group">
-            <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>今日报餐</a>
+        <div class="panel-body">
+            <form id="form1">
+                <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+
+                    <div style="padding-top: 20px; margin-right: 30px;">
+                        <table class="form">
+                            <tr>
+                                <th class="formTitle" style="width:140px;">今天中午是否报餐:</th>
+                                <td class="formValue">
+                                    <div class="rdio">
+                                        <input id="F_TodayTrue" name="F_Today" type="radio"><label for="F_TodayTrue">吃</label>
+                                    </div>
+                                    <div class="rdio">
+                                        <input id="F_TodayFalse" name="F_Today" type="radio"><label for="F_TodayFalse">不吃</label>
+                                    </div>
+                                </td>
+                                <th class="formTitle" style="width:140px;">明日中午是否报餐</th>
+                                <td class="formValue">
+                                    <div class="rdio">
+                                        <input id="F_TomorrowTrue" name="F_Tomorrow" type="radio"><label for="F_TomorrowTrue">吃</label>
+                                    </div>
+                                    <div class="rdio">
+                                        <input id="F_TomorrowFalse" name="F_Tomorrow" type="radio"><label for="F_TomorrowFalse">不吃</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><a onclick="submitForm()" class="btn btn-primary">保存</a></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </form>
         </div>
-       
-     
     </div>
-    
 </div>
+ 
 <div class="gridPanel">
     <div id='calendar'></div>
 </div>
