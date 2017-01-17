@@ -233,7 +233,14 @@ namespace NFine.Web.Areas.EatManage.Controllers
                
                 lists.Add(list);
             }
-            return Content(lists.ToJson());
+            var data = new
+            {
+                rows = lists,
+                total = pagination.total,
+                page = pagination.page,
+                records = pagination.records
+            };
+            return Content(data.ToJson());
         }
         [HttpGet]
         [HandlerAjaxOnly]
@@ -263,13 +270,12 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 for (int i = 1; i <= now.AddMonths(1).AddDays(-1).Day; i++)
                 {
 
-
-                    string times = string.Empty;
+                    string times = "";
                     if (!string.IsNullOrEmpty (item.F_AttCard))
                     {
                         foreach (var attr in attlApp.GetList(item.F_AttCard.Trim(), new DateTime(now.Year, now.Month, i), new DateTime(now.Year, now.Month, i)))
                         {
-                            times += attr.AttDate.ToString("HH:mm:ss") + "  ";
+                            times += attr.AttDate.ToString("HH:mm:ss") + " \r\n";
                         }
                     }
                    
@@ -286,7 +292,62 @@ namespace NFine.Web.Areas.EatManage.Controllers
             {
                 Directory.CreateDirectory(destDir);
             }
-            npoiexel.ToExcel(dt, "考勤数据", "Sheet1", destDir + fileName);
+            npoiexel.ToExcel(dt, now.ToString ("yyyy年MM月")+"的考勤数据", "Sheet1", destDir + fileName);
+            return Content("/XlsTemp/" + fileDir + "/" + fileName);
+
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public ActionResult XFExcel(string starttime)
+        {
+            OrganizeApp organizeApp = new OrganizeApp();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("部门");
+            dt.Columns.Add("姓名");
+
+            DateTime now = DateTime.Now;
+            if (!string.IsNullOrEmpty(starttime))
+            {
+                now = starttime.ToDate();
+            }
+            now = new DateTime(now.Year, now.Month, 1);
+            for (int i = 1; i <= now.AddMonths(1).AddDays(-1).Day; i++)
+            {
+                dt.Columns.Add(i + "日");
+
+            }
+            foreach (var item in userApp.GetList(new Pagination() { page = 1, rows = 1000, sord = "asc", sidx = "F_DepartmentId asc,F_CreatorTime desc" }, ""))
+            {
+                DataRow dr = dt.NewRow();
+                dr["部门"] = organizeApp.GetForm(item.F_DepartmentId).F_FullName;
+                dr["姓名"] = item.F_RealName;
+                for (int i = 1; i <= now.AddMonths(1).AddDays(-1).Day; i++)
+                {
+
+
+                    string times = "";
+                    if (!string.IsNullOrEmpty(item.F_PosCard))
+                    {
+                        foreach (var attr in posApp.GetList(item.F_PosCard.Trim(), new DateTime(now.Year, now.Month, i), new DateTime(now.Year, now.Month, i)))
+                        {
+                            times += attr.PosTime.ToString("HH:mm:ss") + "  \r\n";
+                        }
+                    }
+
+                    dr[i + "日"] = times;
+                }
+                dt.Rows.Add(dr);
+            }
+
+            NPOIExcel npoiexel = new NPOIExcel();
+            string fileDir = DateTime.Now.ToString("yyyyMMdd");
+            string fileName = "XF" + Guid.NewGuid().ToString("N") + ".xls";
+            string destDir = Server.MapPath(@"/XlsTemp") + "\\" + fileDir + "\\";
+            if (!Directory.Exists(destDir))
+            {
+                Directory.CreateDirectory(destDir);
+            }
+            npoiexel.ToExcel(dt, now.ToString("yyyy年MM月") + "的消费机数据", "Sheet1", destDir + fileName);
             return Content("/XlsTemp/" + fileDir + "/" + fileName);
 
         }

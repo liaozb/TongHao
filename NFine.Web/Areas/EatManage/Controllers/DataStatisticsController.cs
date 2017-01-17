@@ -98,7 +98,14 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 list.cishu = (kou * 15).ToString();
                 lists.Add(list);
             }
-            return Content(lists.ToJson());
+            var data = new
+            {
+                rows = lists,
+                total = pagination.total,
+                page = pagination.page,
+                records = pagination.records
+            };
+            return Content(data.ToJson());
         }
         //补助条件
         //a.早上刷卡，上午报餐，中午吃饭补助15元；

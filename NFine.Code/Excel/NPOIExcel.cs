@@ -35,7 +35,7 @@ namespace NFine.Code.Excel
             row.CreateCell(0).SetCellValue(this._title);
             sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, table.Columns.Count - 1));
             row.Height = 500;
-
+            sheet.CreateFreezePane(2, 0, 5, 0);
             ICellStyle cellStyle = workBook.CreateCellStyle();
             IFont font = workBook.CreateFont();
             font.FontName = "微软雅黑";
@@ -58,11 +58,12 @@ namespace NFine.Code.Excel
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 row = sheet.CreateRow(2 + i);
-                row.Height = 250;
+                row.Height = 250 * 5;
                 for (int j = 0; j < table.Columns.Count; j++)
                 {
+                    row.CreateCell(j).CellStyle.WrapText=true;
                     row.CreateCell(j).SetCellValue(table.Rows[i][j].ToString());
-                    sheet.SetColumnWidth(j, 256 * 15);
+                    sheet.SetColumnWidth(j, 256 * 8);
                 }
             }
 

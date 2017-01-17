@@ -7,6 +7,8 @@
 
 <script>
     $(function () {
+        var date = new Date();
+        $("#starttime").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
         gridList();
     })
     function gridList() {
@@ -28,7 +30,7 @@
                 { label: '早餐刷卡', name: 'zaocan', width: 100, align: 'left' },
                 { label: '午餐刷卡', name: 'wucan', width: 100, align: 'left' },
                 { label: '晚餐刷卡', name: 'wancan', width: 100, align: 'left' }
-            ],
+            ], pager: "#gridPager",
             sortname: 'F_DepartmentId asc,F_CreatorTime desc',
             viewrecords: true
         });
@@ -54,20 +56,27 @@
         });
     }
     function btn_export() {
-        
         $.ajax({
             url: "/EatManage/EditData/KQExcel",
-            
             data: { starttime: $("#starttime").val() },
-          
             dataType: "Text",
             success: function (data) {
                 downloadFile(data);
             }
         });
-        
     }
-   
+    function btn_export2() {
+
+        $.ajax({
+            url: "/EatManage/EditData/XFExcel",
+            data: { starttime: $("#starttime").val() },
+            dataType: "Text",
+            success: function (data) {
+                downloadFile(data);
+            }
+        });
+
+    }
     function downloadFile(url) {
         try {
             var elemIF = document.createElement("iframe");
@@ -85,12 +94,13 @@
         <div class="btn-group">
             <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
             <a class="btn btn-primary" onclick="btn_export()">导出考勤数据</a>
+            <a class="btn btn-primary" onclick="btn_export2()">导出刷卡数据</a>
         </div>
     
         <div class="operate">
             <ul class="nav nav-pills">
                 <li class="first">已选中<span>1</span>项</li>
-                <li><a id="NF-edit" authorize="yes" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改考勤数据</a></li>
+                <li><a   onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>修改考勤数据</a></li>
                  
             </ul>
             <a href="javascript:;" class="close"></a>
@@ -122,7 +132,7 @@
     </div>
 </div>
 <div class="gridPanel">
-    <table id="gridList"></table>
+    <table id="gridList"></table><div id="gridPager"></div>
 </div>
 
 
