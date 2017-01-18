@@ -8,6 +8,11 @@
 <script src="~/Scripts/locale/zh-cn.js"></script>
 <script type="text/javascript">
     $(function () {
+        var date = new Date();
+        if (date.getHours() >= 10) {
+            $("#F_TodayTrue").attr("disabled", "disabled");
+            $("#F_TodayFalse").attr("disabled", "disabled");
+        }
         $('#calendar').fullCalendar({
             header: {
                 left: 'prev,next today',
@@ -24,7 +29,7 @@
                 $("#form1").formSerialize(data);
             }
         });
-
+        
     });
     function submitForm() {
         if (!$('#form1').formValid()) {
