@@ -41,7 +41,9 @@ Public Class Form1
                             col = col + 1
                         Next
                         Dim dt As DateTime
-                        If Not String.IsNullOrEmpty(cardNo) AndAlso cardNo <> "CardNo" AndAlso DateTime.TryParseExact(attDate, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None, dt) Then
+                        If Not String.IsNullOrEmpty(cardNo) AndAlso cardNo <> "CardNo" AndAlso Not String.IsNullOrEmpty(attDate) Then
+                            dt = DateTime.ParseExact(attDate, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture)
+                            'ShowInfo(cardNo + ":" + dt.ToString() + "---")
                             conn.Execute("if not exists(select 1 from PosLog where CardNo=@CardNo and PosTime=@PosTime) 
                                            insert into PosLog(F_Id,CardNo,PosTime)values(@F_Id,@CardNo,@PosTime);", New With {
                                      .F_Id = Guid.NewGuid(),
@@ -115,5 +117,17 @@ Public Class Form1
         Dim runKey As RegistryKey = Local.CreateSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run\")
         runKey.SetValue("同步数据", Application.StartupPath + "\\NFine.Tasks.exe")
         Local.Close()
+    End Sub
+
+    Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        e.Cancel = True
+        Me.WindowState = FormWindowState.Minimized
+    End Sub
+
+    Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs) Handles NotifyIcon1.DoubleClick
+        If Me.WindowState = FormWindowState.Minimized Then
+            Me.Show()
+            Me.ShowInTaskbar = True
+        End If
     End Sub
 End Class
