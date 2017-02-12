@@ -422,11 +422,11 @@
     <Content Include="Index.htm" />
     <Content Include="packages.config" />
     <Content Include="Areas\EatManage\Views\ReportEat\Index.cshtml" />
-    <Content Include="Areas\EatManage\Views\ReportEat\Form.cshtml" />
     <Content Include="Areas\EatManage\Views\DataStatistics\Index.cshtml" />
     <Content Include="Areas\EatManage\Views\EditData\Index.cshtml" />
     <Content Include="Areas\EatManage\Views\EditData\Details.cshtml" />
     <Content Include="Areas\EatManage\Views\Web.config" />
+    <None Include="Properties\PublishProfiles\ww.pubxml" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <Content Include="Scripts\fullcalendar.js" />
     <Content Include="Scripts\fullcalendar.min.js" />

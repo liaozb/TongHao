@@ -10,7 +10,7 @@ namespace NFine.Domain.IRepository.EatManage
         void DeleteForm(string keyValue);
         void SubmitForm(ReportEatEntity userEntity, string keyValue);
         List<ReportEatEntity> GetList(string creatorUserId, DateTime start, DateTime end);
-        ReportEatEntity GetCurrentTime(string creatorUserId, DateTime time);
+        ReportEatEntity GetCurrentTime(string creatorUserId, DateTime time,int dd);
     }
     public interface IAttLogRepository : IRepositoryBase<AttLogEntity>
     {

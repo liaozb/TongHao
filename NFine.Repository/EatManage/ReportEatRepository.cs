@@ -37,9 +37,9 @@ namespace NFine.Repository.EatManage
             };
             return this.FindList(strSql.ToString(), parameter);
         }
-        public ReportEatEntity GetCurrentTime(string creatorUserId, DateTime time)
+        public ReportEatEntity GetCurrentTime(string creatorUserId, DateTime time,int dd)
         {
-            return this.FindEntity(f=> f.F_UserId == creatorUserId && f.F_Time.Year==time.Year && f.F_Time.Month==time.Month&& f.F_Time.Day==time.Day);
+            return this.FindEntity(f=> f.F_UserId == creatorUserId && f.F_IsEat==dd && f.F_Time.Year==time.Year && f.F_Time.Month==time.Month&& f.F_Time.Day==time.Day);
         }
         public void SubmitForm(ReportEatEntity userEntity, string keyValue)
         {

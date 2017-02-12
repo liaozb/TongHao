@@ -91,7 +91,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Interop.zkemkeeper">
-      <HintPath>..\..\考勤机脱机 6.2.5.50\脱机 6.2.5.50\32位Demo\VB.net\IFace\AttLogs\bin\x86\Release\Interop.zkemkeeper.dll</HintPath>
+      <HintPath>..\..\..\..\Projects\考勤机脱机 6.2.5.50\脱机 6.2.5.50\32位Demo\C#\Black&amp;White\UserInfo\bin\Release\Interop.zkemkeeper.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />

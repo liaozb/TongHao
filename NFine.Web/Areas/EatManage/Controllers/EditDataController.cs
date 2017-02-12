@@ -45,19 +45,21 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 now = starttime.ToDate();
             }
             var item = userApp.GetForm(keyValue);
-            var today = reportApp.GetCurrentTime(keyValue, now);
+            var today = reportApp.GetCurrentTime(keyValue, now,1);
             if (today != null)
             {
-                today.F_IsEat = (organizeEntity.baocan=="1" ?true :false);
-                reportApp.SubmitForm(today, today.F_Id);
-            }
+                if (organizeEntity.baocan == "0")
+                {
+                    reportApp.DeleteForm(today.F_Id);
+                }
+             }
             else
             {
                 if (organizeEntity.baocan == "1")
                 {
                     today = new ReportEatEntity();
                     today.F_Time = now;
-                    today.F_IsEat = true;
+                    today.F_IsEat = 1;
                     today.F_UserId = keyValue;
                     reportApp.SubmitForm(today, "");
                 }
@@ -139,9 +141,9 @@ namespace NFine.Web.Areas.EatManage.Controllers
             }
             var list = new DataStatisticsForm();
             var item = userApp.GetForm(keyValue);
-            var baocan = reportApp.GetCurrentTime(item.F_Id, now);
+            var baocan = reportApp.GetCurrentTime(item.F_Id, now,1);
             list.baocan = "0";
-            if (baocan != null && baocan.F_IsEat)
+            if (baocan != null )
             {
                 list.baocan = "1";
             }
@@ -194,9 +196,9 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 list.F_DepartmentId = item.F_DepartmentId;
                 list.F_Id = item.F_Id;
                 list.name = item.F_RealName;
-                var baocan = reportApp.GetCurrentTime(item.F_Id, now);
+                var baocan = reportApp.GetCurrentTime(item.F_Id, now,1);
                 list.baocan = "未报";
-                if (baocan != null && baocan.F_IsEat)
+                if (baocan != null)
                 {
                     list.baocan = "已报";
                 }

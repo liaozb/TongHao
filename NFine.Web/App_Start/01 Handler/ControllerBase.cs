@@ -17,13 +17,13 @@ namespace NFine.Web
             return View();
         }
         [HttpGet]
-        [HandlerAuthorize]
+       
         public virtual ActionResult Form()
         {
             return View();
         }
         [HttpGet]
-        [HandlerAuthorize]
+       
         public virtual ActionResult Details()
         {
             return View();

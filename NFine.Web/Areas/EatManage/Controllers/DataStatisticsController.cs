@@ -55,9 +55,9 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 list.F_DepartmentId = item.F_DepartmentId;
                 list.F_Id = item.F_Id;
                 list.name = item.F_RealName;
-                var baocan = reportApp.GetCurrentTime(item.F_Id, now);
+                var baocan = reportApp.GetCurrentTime(item.F_Id, now,1);
                 list.baocan = "未报";
-                if (baocan != null && baocan.F_IsEat)
+                if (baocan != null)
                 {
                     list.baocan = "已报";
                 }
@@ -95,7 +95,7 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 int kou = 0;
                 PosT(now, item.F_PosCard, item.F_AttCard, item.F_Id, out bu, out kou);
                 list.yujibuzhu = (bu * 15).ToString();
-                list.cishu = (kou * 15).ToString();
+                list.cishu = (kou).ToString();
                 lists.Add(list);
             }
             var data = new
@@ -129,11 +129,11 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 {
                     return;
                 }
-                var baocan = reportApp.GetCurrentTime(F_Id, i);
+                var baocan = reportApp.GetCurrentTime(F_Id, i,1);
                 //考勤
                 var attl = attlApp.GetCurrentTime(F_AttCard, i, true);
                 var pos1 = posApp.GetCurrentTime(F_PosCard, i, 1);
-                if (attl != null && baocan != null && baocan.F_IsEat && pos1 != null)
+                if (attl != null && baocan != null && pos1 != null)
                 {
                     buzhucishu = buzhucishu + 1;
                 }
@@ -177,9 +177,9 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 dr["部门"] = organizeApp.GetForm( item.F_DepartmentId).F_FullName;
                   
                 dr["姓名"] = item.F_RealName;
-                var baocan = reportApp.GetCurrentTime(item.F_Id, now);
+                var baocan = reportApp.GetCurrentTime(item.F_Id, now,1);
                 dr["报餐情况"] = "未报";
-                if (baocan != null && baocan.F_IsEat)
+                if (baocan != null)
                 {
                     dr["报餐情况"] = "已报";
                 }
@@ -217,7 +217,7 @@ namespace NFine.Web.Areas.EatManage.Controllers
                 int kou = 0;
                 PosT(now, item.F_PosCard, item.F_AttCard, item.F_Id, out bu, out kou);
                 dr["预计补助"] = (bu * 15).ToString();
-                dr["扣次数"] = (kou * 15).ToString();
+                dr["扣次数"] = (kou).ToString();
                 dt.Rows.Add(dr);
             }
             NPOIExcel npoiexel = new NPOIExcel();

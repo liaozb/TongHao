@@ -12,13 +12,12 @@ namespace NFine.Web.Areas.EatManage.Controllers
 {
     public class EatForm
     {
-        public bool F_TodayTrue { get; set; }
-        public bool F_TomorrowTrue { get; set; }
-        public bool F_TodayFalse { get; set; }
-        public bool F_TomorrowFalse { get; set; }
+        public string week { get; set; }
+        public bool ck { get; set; }
+   
     }
 
-    public class ReportEatController : ControllerBase
+    public class ReportEatController : Controller
     {
         private ReportEatApp reportApp = new ReportEatApp();
    
@@ -30,10 +29,10 @@ namespace NFine.Web.Areas.EatManage.Controllers
         {
             DateTime start = Request.QueryString["start"].ToDate();
             DateTime end = Request.QueryString["end"].ToDate();
-            var data = reportApp.GetList(OperatorProvider.Provider.GetCurrent().UserId, start, end).Where (f=> f.F_IsEat).Select(f => new
+            var data = reportApp.GetList(OperatorProvider.Provider.GetCurrent().UserId, start, end).Select(f => new
             {
                 id = f.F_Id,
-                title = "已报餐",
+                title =(f.F_IsEat==0?"早餐": f.F_IsEat == 1 ? "早餐":"晚餐")+ "已报餐",
                 start = f.F_Time,
                 end = f.F_Time,
                 url = "",
@@ -48,77 +47,114 @@ namespace NFine.Web.Areas.EatManage.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SubmitForm(EatForm organizeEntity)
         {
-            var today = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, DateTime.Now);
+            int i = DateTime.Now.DayOfWeek - DayOfWeek.Monday;
+            if (i == -1) i = 6;
+            TimeSpan ts = new TimeSpan(i, 0, 0, 0);
+            DateTime startWeek = DateTime.Now.Subtract(ts);
+            int dd = 0;
+            if (organizeEntity.week.Contains("zhong"))
+            {
+                dd = 1;
+            }
+            else if (organizeEntity.week.Contains("wan"))
+            {
+                dd = 2;
+            }
+            if (organizeEntity.week.Contains("2"))
+            {
+                startWeek=startWeek.AddDays(1);
+            }
+            else if (organizeEntity.week.Contains("3"))
+            {
+                startWeek = startWeek.AddDays(2);
+            }
+            else if (organizeEntity.week.Contains("4"))
+            {
+                startWeek = startWeek.AddDays(3);
+            }
+            else if (organizeEntity.week.Contains("5"))
+            {
+                startWeek = startWeek.AddDays(4);
+            }
+            else if (organizeEntity.week.Contains("6"))
+            {
+                startWeek = startWeek.AddDays(5);
+            }
+            else if (organizeEntity.week.Contains("7"))
+            {
+                startWeek = startWeek.AddDays(6);
+            }
+            var today = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, DateTime.Now,dd);
             if (today != null)
             {
-                today.F_IsEat = organizeEntity.F_TodayTrue;
-                reportApp.SubmitForm(today, today.F_Id);
+                if (organizeEntity.ck == false)
+                {
+                    reportApp.DeleteForm(today.F_Id);
+                }
             }
             else
             {
                 today = new ReportEatEntity();
-                today.F_Time = DateTime.Now;
-                today.F_IsEat = organizeEntity.F_TodayTrue;
+                today.F_Time = startWeek;
+                today.F_IsEat =dd;
                 today.F_UserId = OperatorProvider.Provider.GetCurrent().UserId;
                 reportApp.SubmitForm(today, "");
             }
-            var tw = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, DateTime.Now.AddDays (1));
-            if (tw != null)
-            {
-                tw.F_IsEat = organizeEntity.F_TomorrowTrue;
-                reportApp.SubmitForm(tw, tw.F_Id);
-            }
-            else
-            {
-                tw = new ReportEatEntity();
-                tw.F_Time = DateTime.Now.AddDays(1);
-                tw.F_IsEat = organizeEntity.F_TomorrowTrue;
-                tw.F_UserId = OperatorProvider.Provider.GetCurrent().UserId;
-                reportApp.SubmitForm(tw, "");
-            }
-            return Success("操作成功。");
+            return Content(new AjaxResult { state = ResultType.success.ToString(), message = "操作成功。" }.ToJson()); 
         }
         [HttpGet]
         [HandlerAjaxOnly]
-        public ActionResult GetFormJson()
+        public ActionResult GetFormJson(string week)
         {
-            DateTime start = DateTime.Now;
-            DateTime end = DateTime.Now.AddDays(1);
-            var lists = new EatForm();
-            var data = reportApp.GetList(OperatorProvider.Provider.GetCurrent().UserId, start, end);
-            foreach (var item in data)
+            int i = DateTime.Now.DayOfWeek - DayOfWeek.Monday;
+            if (i == -1) i = 6;
+            TimeSpan ts = new TimeSpan(i, 0, 0, 0);
+            DateTime startWeek = DateTime.Now.Subtract(ts);
+            int dd = 0;
+            if (week.Contains("zhong"))
             {
-                if (item.F_Time.Date.Equals(DateTime.Now.Date))
-                {
-                    if (item.F_IsEat)
-                    {
-                        lists.F_TodayTrue = true;
-                        lists.F_TodayFalse = false;
-                    }
-                    else
-                    {
-                        lists.F_TodayTrue = false;
-                        lists.F_TodayFalse = true;
-                    }
-                }
-                else
-                {
-                    if (item.F_IsEat)
-                    {
-                        lists.F_TomorrowTrue = true;
-                        lists.F_TomorrowFalse = false;
-                    }
-                    else
-                    {
-                        lists.F_TomorrowTrue = false;
-                        lists.F_TomorrowFalse = true;
-                    }
-
-                }
+                dd = 1;
             }
-
-            return Content(lists.ToJson());
+            else if (week.Contains("wan"))
+            {
+                dd = 2;
+            }
+            if (week.Contains("2"))
+            {
+                startWeek = startWeek.AddDays(1);
+            }
+            else if (week.Contains("3"))
+            {
+                startWeek = startWeek.AddDays(2);
+            }
+            else if (week.Contains("4"))
+            {
+                startWeek = startWeek.AddDays(3);
+            }
+            else if (week.Contains("5"))
+            {
+                startWeek = startWeek.AddDays(4);
+            }
+            else if (week.Contains("6"))
+            {
+                startWeek = startWeek.AddDays(5);
+            }
+            else if (week.Contains("7"))
+            {
+                startWeek = startWeek.AddDays(6);
+            }
+            var today = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, startWeek, dd);
+            if (today != null)
+            {
+                return Content(new { ck=true }.ToJson());
+            }
+            return Content(new { ck = false }.ToJson());
         }
+        [HttpGet]
+        public ActionResult Index()
+        {
 
+            return View();
+        }
     }
 }

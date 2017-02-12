@@ -13,9 +13,9 @@ namespace NFine.Application.EatManage
         {
             return service.GetList(userid, start,end);
         }
-        public ReportEatEntity GetCurrentTime(string userid, DateTime start)
+        public ReportEatEntity GetCurrentTime(string userid, DateTime start,int dd)
         {
-            return service.GetCurrentTime(userid, start);
+            return service.GetCurrentTime(userid, start,dd);
         }
         public void DeleteForm(string keyValue)
         {

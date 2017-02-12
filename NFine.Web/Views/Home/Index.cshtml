@@ -11,6 +11,23 @@
     <link href="~/Content/css/framework-theme.css" rel="stylesheet" />
     <script src="~/Content/js/framework-ui.js"></script>
     <script src="~/Content/js/framework-clientdata.js"></script>
+    <script>
+        function btn_revisepassword() {
+            var keyValue = "@NFine.Code.OperatorProvider.Provider.GetCurrent().UserId";
+            var Account = "@NFine.Code.OperatorProvider.Provider.GetCurrent().UserCode";
+            var RealName = "@NFine.Code.OperatorProvider.Provider.GetCurrent().UserName";
+            $.modalOpen({
+                id: "RevisePassword",
+                title: '重置密码',
+                url: '/SystemManage/User/RevisePassword?keyValue=' + keyValue + "&account=" + escape(Account) + '&realName=' + escape(RealName),
+                width: "450px",
+                height: "260px",
+                callBack: function (iframeId) {
+                    top.frames[iframeId].submitForm();
+                }
+            });
+        }
+    </script>
 </head>
 <body style="overflow: hidden;">
     <div id="ajax-loader" style="cursor: progress; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: #fff; z-index: 10000; overflow: hidden;">
@@ -37,10 +54,10 @@
                                     <span class="hidden-xs">@NFine.Code.OperatorProvider.Provider.GetCurrent().UserCode</span>
                                 </a>
                                 <ul class="dropdown-menu pull-right">
-                                    @*<li><a class="menuItem" data-id="userInfo" href="/SystemManage/User/Info"><i class="fa fa-user"></i>个人信息</a></li>
-                                    <li><a href="javascript:void();"><i class="fa fa-inbox"></i>我的信箱</a></li>*@
+                                    <li><a    href="javascript:btn_revisepassword()"><i class="fa fa-user"></i>重置密码</a></li>
+                                  
                                     <li><a href="javascript:void();" onclick="layer.msg('浏览器缓存清除成功');"><i class="fa fa-trash-o"></i>清空缓存</a></li>
-                                    @*<li><a href="javascript:void();"><i class="fa fa-paint-brush"></i>皮肤设置</a></li>*@
+                                
                                     <li class="divider"></li>
                                     <li><a href="~/Login/OutLogin"><i class="ace-icon fa fa-power-off"></i>安全退出</a></li>
                                 </ul>

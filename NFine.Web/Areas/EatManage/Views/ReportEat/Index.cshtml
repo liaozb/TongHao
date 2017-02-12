@@ -21,73 +21,156 @@
             },
             events: '/EatManage/ReportEat/GetGridJson'
         });
-        $.ajax({
-            url: "/EatManage/ReportEat/GetFormJson",
-            dataType: "json",
-            async: false,
-            success: function (data) {
-                $("#form1").formSerialize(data);
-            }
+        $("input[type=checkbox]").each(function () {
+            var name = $(this).attr("name");
+            $.ajax({
+                url: "/EatManage/ReportEat/GetFormJson?week=" + name,
+                dataType: "json",
+                success: function (data) {
+                    if (data.ck == true) {
+                        $("#" + name).attr("checked", "checked")
+                    } else {
+                        $("#" + name).removeAttr("checked")
+                    }
+                   
+                }
+            });
         });
-        
-    });
-    function submitForm() {
-        if (!$('#form1').formValid()) {
-            return false;
-        }
-        $.submitForm({
-            url: "/EatManage/ReportEat/SubmitForm",
-            param: $("#form1").formSerialize(),
-            success: function () {
-                $.reload();
-            }
+       
+        $("input[type=checkbox]").click(function () {
+            $.submitForm({
+                url: "/EatManage/ReportEat/SubmitForm",
+                param: {week:$(this).attr("name"),ck:$(this).is(':checked')},
+                success: function () {
+                    $('#calendar').fullCalendar('refetchEvents');
+                }
+            })
+
         })
-    }
+    });
+   
 
 </script>
 <div class="rows" style="margin-bottom: 1%; border: 1px solid #e6e6e6; overflow: hidden; padding-left: 1px;">
     <div class="panel panel-default">
-        <div class="panel-heading"><i class="fa fa-line-chart fa-lg" style="padding-right: 5px;"></i>今日报餐<span style="color:red">(每天十点前可报当前中餐，十点之后只能报明天的中餐)</span>
+        <div class="panel-heading">
+            <i class="fa fa-line-chart fa-lg" style="padding-right: 5px;"></i>今日报餐<span style="color:red">(每天十点前可报当前中餐，十点之后只能报明天的中餐)</span>
         </div>
         <div class="panel-body">
             <form id="form1">
                 <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
-
                     <div style="padding-top: 20px; margin-right: 30px;">
                         <table class="form">
                             <tr>
-                                <th class="formTitle" style="width:140px;">今天中午是否报餐:</th>
+                                <th class="formTitle"  >本周一:</th>
                                 <td class="formValue">
-                                    <div class="rdio">
-                                        <input id="F_TodayTrue" name="F_Today" type="radio"><label for="F_TodayTrue">吃</label>
+                                    <div class="ckbox">
+                                        <input id="F_1zao" name="F_1zao" type="checkbox"><label for="F_1zao">早餐吃</label>
                                     </div>
-                                    <div class="rdio">
-                                        <input id="F_TodayFalse" name="F_Today" type="radio"><label for="F_TodayFalse">不吃</label>
+                                    <div class="ckbox">
+                                        <input id="F_1zhong" name="F_1zhong" type="checkbox"><label for="F_1zhong">中餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_1wan" name="F_1wan" type="checkbox"><label for="F_1wan">晚餐吃</label>
                                     </div>
                                 </td>
-                                <th class="formTitle" style="width:140px;">明日中午是否报餐</th>
+                                <th class="formTitle"  >本周二:</th>
                                 <td class="formValue">
-                                    <div class="rdio">
-                                        <input id="F_TomorrowTrue" name="F_Tomorrow" type="radio"><label for="F_TomorrowTrue">吃</label>
-                                    </div>
-                                    <div class="rdio">
-                                        <input id="F_TomorrowFalse" name="F_Tomorrow" type="radio"><label for="F_TomorrowFalse">不吃</label>
-                                    </div>
+                                  
+                                        <div class="ckbox">
+                                            <input id="F_2zao" name="F_2zao" type="checkbox"><label for="F_2zao">早餐吃</label>
+                                        </div>
+                                        <div class="ckbox">
+                                            <input id="F_2zhong" name="F_2zhong" type="checkbox"><label for="F_2zhong">中餐吃</label>
+                                        </div>
+                                        <div class="ckbox">
+                                            <input id="F_2wan" name="F_2wan" type="checkbox"><label for="F_2wan">晚餐吃</label>
+                                        </div>
+                                    
+
+                                </td>
+                                <th class="formTitle"  >本周三:</th>
+                                <td class="formValue">
+                                   
+                                        <div class="ckbox">
+                                            <input id="F_3zao" name="F_3zao" type="checkbox"><label for="F_3zao">早餐吃</label>
+                                        </div>
+                                        <div class="ckbox">
+                                            <input id="F_3zhong" name="F_3zhong" type="checkbox"><label for="F_3zhong">中餐吃</label>
+                                        </div>
+                                        <div class="ckbox">
+                                            <input id="F_3wan" name="F_3wan" type="checkbox"><label for="F_3wan">晚餐吃</label>
+                                        </div>
+                                     
+
                                 </td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td><a onclick="submitForm()" class="btn btn-primary">保存</a></td>
+
+                                <th class="formTitle" >本周四:</th>
+                                <td class="formValue">
+                                    <div class="ckbox">
+                                        <input id="F_4zao" name="F_4zao" type="checkbox"><label for="F_4zao">早餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_4zhong" name="F_4zhong" type="checkbox"><label for="F_4zhong">中餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_4wan" name="F_4wan" type="checkbox"><label for="F_4wan">晚餐吃</label>
+                                    </div>
+
+                                </td>
+                                <th class="formTitle" >本周五:</th>
+                                <td class="formValue">
+                                    <div class="ckbox">
+                                        <input id="F_5zao" name="F_5zao" type="checkbox"><label for="F_5zao">早餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_5zhong" name="F_5zhong" type="checkbox"><label for="F_5zhong">中餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_5wan" name="F_5wan" type="checkbox"><label for="F_5wan">晚餐吃</label>
+                                    </div>
+
+                                </td>
+                                <th class="formTitle" >本周六:</th>
+                                <td class="formValue">
+                                    <div class="ckbox">
+                                        <input id="F_6zao" name="F_6zao" type="checkbox"><label for="F_6zao">早餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_6zhong" name="F_6zhong" type="checkbox"><label for="F_6zhong">中餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_6wan" name="F_6wan" type="checkbox"><label for="F_6wan">晚餐吃</label>
+                                    </div>
+
+                                </td>
                             </tr>
+                            <tr>
+                                <th class="formTitle" >本周日:</th>
+                                <td class="formValue">
+                                    <div class="ckbox">
+                                        <input id="F_7zao" name="F_7zao" type="checkbox"><label for="F_7zao">早餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_7zhong" name="F_7zhong" type="checkbox"><label for="F_7zhong">中餐吃</label>
+                                    </div>
+                                    <div class="ckbox">
+                                        <input id="F_7wan" name="F_7wan" type="checkbox"><label for="F_7wan">晚餐吃</label>
+                                    </div>
+
+                                </td>
+                            </tr>
+                             
                         </table>
                     </div>
-
                 </div>
             </form>
         </div>
     </div>
 </div>
- 
+
 <div class="gridPanel">
     <div id='calendar'></div>
 </div>

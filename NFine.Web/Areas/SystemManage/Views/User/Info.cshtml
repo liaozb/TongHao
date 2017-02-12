@@ -3,9 +3,26 @@
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 <script>
+    var keyValue = $.request("keyValue");
     $(function () {
-        $('.wrapper').height($(window).height() - 11);
-    })
+        $("#F_Account").val($.request('account'));
+        $("#F_RealName").val( $.request('realName'));
+    });
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var postData = $("#form1").formSerialize();
+        postData["userPassword"] = $("#F_UserPassword").val();
+        postData["keyValue"] = keyValue;
+        $.submitForm({
+            url: "/SystemManage/User/SubmitRevisePassword",
+            param: postData,
+            success: function () {
+                $.loading(false)
+            }
+        })
+    }
 </script>
 <div class="wrapper">
     <ul class="nav nav-tabs">

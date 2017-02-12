@@ -10,7 +10,7 @@ namespace NFine.Domain.Entity.EatManage
     {
         public string F_Id { get; set; }
         public DateTime F_Time { get; set; }
-        public bool F_IsEat { get; set; }
+        public int F_IsEat { get; set; }
         public string F_UserId { get; set; }
         public DateTime? F_CreatorTime { get; set; }
         public string F_CreatorUserId { get; set; }
