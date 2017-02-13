@@ -28,7 +28,7 @@ namespace NFine.Repository.EatManage
             strSql.Append(@"SELECT *
                             FROM    Report_Eat 
                                     
-                            WHERE  F_UserId=@F_UserId and  F_Time between @start and @end ");
+                            WHERE  F_UserId=@F_UserId and  F_Time between @start and @end order by F_IsEat");
             DbParameter[] parameter =
             {
                  new SqlParameter("@F_UserId",creatorUserId),

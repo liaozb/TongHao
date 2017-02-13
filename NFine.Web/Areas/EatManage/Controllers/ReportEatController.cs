@@ -32,9 +32,9 @@ namespace NFine.Web.Areas.EatManage.Controllers
             var data = reportApp.GetList(OperatorProvider.Provider.GetCurrent().UserId, start, end).Select(f => new
             {
                 id = f.F_Id,
-                title =(f.F_IsEat==0?"早餐": f.F_IsEat == 1 ? "早餐":"晚餐")+ "已报餐",
-                start = f.F_Time,
-                end = f.F_Time,
+                title =(f.F_IsEat==0?"1.早餐": f.F_IsEat == 1 ? "2.中餐":"3.晚餐")+ "已报餐",
+                start = f.F_Time.ToString ("yyyy-MM-dd"),
+                end = f.F_Time.ToString("yyyy-MM-dd"),
                 url = "",
                 allDay = true,
                 color = "#06c"
@@ -84,7 +84,7 @@ namespace NFine.Web.Areas.EatManage.Controllers
             {
                 startWeek = startWeek.AddDays(6);
             }
-            var today = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, DateTime.Now,dd);
+            var today = reportApp.GetCurrentTime(OperatorProvider.Provider.GetCurrent().UserId, startWeek, dd);
             if (today != null)
             {
                 if (organizeEntity.ck == false)
